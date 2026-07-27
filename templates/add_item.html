@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Add Item — Inventory{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <h4 class="mb-3"><i class="bi bi-plus-circle"></i> Add New Item</h4>
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Item Name *</label>
+                        <input type="text" name="name" id="name"
+                               class="form-control" required autofocus
+                               placeholder="e.g., Widget A">
+                    </div>
+                    <div class="mb-3">
+                        <label for="sku" class="form-label">SKU / Code</label>
+                        <input type="text" name="sku" id="sku"
+                               class="form-control"
+                               placeholder="e.g., WDG-001 (optional)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea name="description" id="description" rows="2"
+                                  class="form-control"
+                                  placeholder="Optional details about this item"></textarea>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label for="unit" class="form-label">Unit</label>
+                            <input type="text" name="unit" id="unit"
+                                   class="form-control" value="pcs"
+                                   placeholder="pcs, kg, L, boxes...">
+                        </div>
+                        <div class="col-6">
+                            <label for="initial_stock" class="form-label">Initial Stock</label>
+                            <input type="number" name="initial_stock" id="initial_stock"
+                                   class="form-control" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="min_stock" class="form-label">Minimum Stock Alert</label>
+                        <input type="number" name="min_stock" id="min_stock"
+                               class="form-control" value="0" min="0"
+                               placeholder="Alert when stock goes below this">
+                        <div class="form-text">You'll see a warning on the dashboard when stock drops to this level.</div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-lg"></i> Create Item
+                        </button>
+                        <a href="{{ url_for('items_list') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
