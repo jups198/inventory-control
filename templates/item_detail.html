@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}{{ item.name }} — Inventory{% endblock %}
+{% block content %}
+
+<div class="mb-3">
+    <a href="{{ url_for('items_list') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Items
+    </a>
+</div>
+
+{# ── Item Info Card ── #}
+<div class="card shadow-sm mb-3">
+    <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <div>
+                <h4 class="mb-0">{{ item.name }}</h4>
+                {% if item.sku %}<code class="text-muted">{{ item.sku }}</code>{% endif %}
+                {% if item.description %}
+                <p class="text-muted mt-1 mb-0">{{ item.description }}</p>
+                {% endif %}
+            </div>
+            <div class="text-end">
+                <div class="display-5 fw-bold
+                    {% if item.current_stock == 0 %}text-danger
+                    {% elif item.current_stock <= item.min_stock %}text-warning
+                    {% else %}text-success{% endif %}">
+                    {{ item.current_stock }}
+                </div>
+                <small class="text-muted">{{ item.unit }}</small>
+                {% if item.current_stock == 0 %}
+                <br><span class="badge bg-danger">Out of stock</span>
+                {% elif item.current_stock <= item.min_stock %}
+                <br><span class="badge bg-warning text-dark">Low (min: {{ item.min_stock }})</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ── Stock Adjustment ── #}
+<div class="row g-3 mb-4">
+    {# Increase Stock #}
+    <div class="col-md-6">
+        <div class="card border-success h-100">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0"><i class="bi bi-arrow-down-circle"></i> Stock In (Add)</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('adjust_stock', item_id=item.id) }}">
+                    <input type="hidden" name="action" value="increase">
+                    <div class="mb-2">
+                        <label class="form-label">Quantity ({{ item.unit }})</label>
+                        <input type="number" name="quantity" class="form-control"
+                               required min="1" placeholder="How many?">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Note</label>
+                        <input type="text" name="notes" class="form-control"
+                               placeholder="e.g., Received shipment">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-plus-lg"></i> Add Stock
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# Decrease Stock #}
+    <div class="col-md-6">
+        <div class="card border-danger h-100">
+            <div class="card-header bg-danger text-white">
+                <h6 class="mb-0"><i class="bi bi-arrow-up-circle"></i> Stock Out (Issue)</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('adjust_stock', item_id=item.id) }}">
+                    <input type="hidden" name="action" value="decrease">
+                    <div class="mb-2">
+                        <label class="form-label">Quantity ({{ item.unit }})</label>
+                        <input type="number" name="quantity" class="form-control"
+                               required min="1" max="{{ item.current_stock }}"
+                               placeholder="Max: {{ item.current_stock }}">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Note</label>
+                        <input type="text" name="notes" class="form-control"
+                               placeholder="e.g., Given to Dept A">
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100"
+                            {% if item.current_stock == 0 %}disabled{% endif %}>
+                        <i class="bi bi-dash-lg"></i> Remove Stock
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ── Transaction History ── #}
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Stock Flow</h5>
+        <span class="badge bg-secondary">{{ transactions|length }} entries</span>
+    </div>
+    <div class="card-body p-0" style="max-height: 500px; overflow-y: auto;">
+        {% if transactions %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light sticky-top">
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Qty</th>
+                        <th>User</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in transactions %}
+                    <tr>
+                        <td class="small text-nowrap">{{ tx.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>
+                            {% if tx.type == 'in' %}
+                            <span class="badge bg-success">IN</span>
+                            {% elif tx.type == 'out' %}
+                            <span class="badge bg-danger">OUT</span>
+                            {% else %}
+                            <span class="badge bg-primary">NEW</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>
+                                {% if tx.type == 'out' %}-{% else %}+{% endif %}{{ tx.quantity }}
+                            </strong>
+                        </td>
+                        <td class="small">{{ tx.user.username }}</td>
+                        <td class="small text-muted">{{ tx.notes or '—' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+            <p>No transactions recorded yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
