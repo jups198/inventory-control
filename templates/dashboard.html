@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Inventory{% endblock %}
+{% block content %}
+
+{# ── Stats Cards ── #}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card border-primary h-100">
+            <div class="card-body text-center py-3">
+                <div class="display-6 fw-bold text-primary">{{ items|length }}</div>
+                <small class="text-muted">Total Items</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-warning h-100">
+            <div class="card-body text-center py-3">
+                <div class="display-6 fw-bold text-warning">{{ low_stock|length }}</div>
+                <small class="text-muted">Low Stock</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-success h-100">
+            <div class="card-body text-center py-3">
+                <div class="display-6 fw-bold text-success">
+                    {{ items|sum(attribute='current_stock') }}
+                </div>
+                <small class="text-muted">Total Stock</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-info h-100">
+            <div class="card-body text-center py-3">
+                <div class="display-6 fw-bold text-info">{{ recent_tx|length }}</div>
+                <small class="text-muted">Recent Moves</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {# ── Low Stock Alerts ── #}
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle text-warning"></i> Low Stock Alerts</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if low_stock %}
+                <div class="list-group list-group-flush">
+                    {% for item in low_stock %}
+                    <a href="{{ url_for('item_detail', item_id=item.id) }}"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ item.name }}</strong>
+                            <br><small class="text-muted">{{ item.sku or '—' }}</small>
+                        </div>
+                        <span class="badge bg-warning text-dark fs-6">
+                            {{ item.current_stock }} / {{ item.min_stock }}
+                        </span>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-check-circle display-6"></i>
+                    <p class="mt-2">All items above minimum stock.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# ── Recent Transactions ── #}
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Activity</h5>
+            </div>
+            <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                {% if recent_tx %}
+                <div class="list-group list-group-flush">
+                    {% for tx in recent_tx %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <a href="{{ url_for('item_detail', item_id=tx.item_id) }}" class="text-decoration-none">
+                                <strong>{{ tx.item.name }}</strong>
+                            </a>
+                            <br>
+                            <small class="text-muted">
+                                {% if tx.type == 'in' %}
+                                <span class="text-success">+{{ tx.quantity }}</span>
+                                {% elif tx.type == 'out' %}
+                                <span class="text-danger">-{{ tx.quantity }}</span>
+                                {% else %}
+                                <span class="text-primary">+{{ tx.quantity }} (new)</span>
+                                {% endif %}
+                                by {{ tx.user.username }}
+                                · {{ tx.created_at.strftime('%d/%m %H:%M') }}
+                            </small>
+                        </div>
+                        <span class="badge bg-secondary rounded-pill">{{ tx.item.unit }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <p>No transactions yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ── Quick Actions ── #}
+<div class="d-grid gap-2 d-md-flex justify-content-md-center">
+    <a href="{{ url_for('add_item') }}" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-circle"></i> Add New Item
+    </a>
+    <a href="{{ url_for('items_list') }}" class="btn btn-outline-primary btn-lg">
+        <i class="bi bi-list-ul"></i> Browse All Items
+    </a>
+</div>
+
+{% endblock %}
