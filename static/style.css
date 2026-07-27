@@ -1,0 +1,76 @@
+/* ── Mobile-first tweaks ── */
+html {
+    font-size: 16px;
+}
+body {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+main {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+/* ── Tap targets for mobile ── */
+.btn, .nav-link, .list-group-item, .clickable-row {
+    touch-action: manipulation;
+}
+@media (max-width: 768px) {
+    .btn-lg {
+        padding: 0.6rem 1rem;
+        font-size: 1rem;
+    }
+    .display-5 {
+        font-size: 2rem;
+    }
+    .display-6 {
+        font-size: 1.5rem;
+    }
+    h4 { font-size: 1.25rem; }
+    h5 { font-size: 1.1rem; }
+    .card-body { padding: 0.75rem; }
+    .table td, .table th {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.875rem;
+    }
+    /* Stack forms better on mobile */
+    .row.g-3 > [class*="col-"] {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* ── Sticky table header ── */
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* ── Navbar active state ── */
+.navbar .nav-link {
+    border-radius: 6px;
+    padding: 0.4rem 0.75rem;
+}
+.navbar .nav-link:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+/* ── Clickable rows ── */
+.clickable-row:hover {
+    background-color: rgba(13, 110, 253, 0.05) !important;
+}
+
+/* ── Card hover for clickable cards ── */
+a.text-decoration-none:hover .card {
+    box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.15) !important;
+    border-color: #0d6efd;
+}
+
+/* ── Alert spacing ── */
+.alert {
+    margin-bottom: 0.75rem;
+}
+
+/* ── Scrollable areas ── */
+.card-body[style*="overflow-y"] {
+    -webkit-overflow-scrolling: touch;
+}
