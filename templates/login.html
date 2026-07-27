@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Login — Inventory{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="text-center mb-4 mt-3">
+            <i class="bi bi-box-seam display-1 text-primary"></i>
+            <h2 class="mt-2">Inventory Control</h2>
+            <p class="text-muted">Sign in to manage your stock</p>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" name="username" id="username"
+                               class="form-control" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" name="password" id="password"
+                               class="form-control" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="remember" id="remember" class="form-check-input">
+                        <label for="remember" class="form-check-label">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">Sign In</button>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3">
+                Don't have an account?
+                <a href="{{ url_for('register') }}">Create one</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
