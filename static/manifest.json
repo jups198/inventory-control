@@ -1,0 +1,18 @@
+{
+    "name": "Inventory Control",
+    "short_name": "Inventory",
+    "description": "Cloud inventory management with user/admin roles",
+    "start_url": "/dashboard",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#0d6efd",
+    "background_color": "#ffffff",
+    "icons": [
+        {
+            "src": "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/box-seam.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ]
+}
